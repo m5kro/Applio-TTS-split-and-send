@@ -15,10 +15,6 @@ def split_and_clean_text_file(input_file, chunk_size=15000):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    output_dir = 'chunks'
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
     start = 0
     chunk_number = 1
     while start < len(text):
