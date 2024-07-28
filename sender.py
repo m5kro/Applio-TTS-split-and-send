@@ -1,5 +1,6 @@
 import os
 from gradio_client import Client
+import wave
 
 # Function to read text from a file
 def read_text_from_file(file_path):
@@ -13,6 +14,7 @@ def process_text_files(folder_path, output_folder_path, tts_voice, tts_rate, f0_
     
     # List all text files in the specified folder
     text_files = [f for f in os.listdir(folder_path) if f.endswith('.txt')]
+    output_wav_files = []
     
     for text_file in text_files:
         text_file_path = os.path.join(folder_path, text_file)
@@ -24,6 +26,7 @@ def process_text_files(folder_path, output_folder_path, tts_voice, tts_rate, f0_
         base_name = os.path.splitext(text_file)[0]
         output_tts_path = os.path.join(output_folder_path, f"{base_name}_tts_output.wav")
         output_rvc_path = os.path.join(output_folder_path, f"{base_name}.wav")
+        output_wav_files.append(output_rvc_path)
         
         # Call the predict function with the text read from the file
         client.predict(
@@ -52,6 +55,18 @@ def process_text_files(folder_path, output_folder_path, tts_voice, tts_rate, f0_
           f0_file=f0_file,
           api_name=api_name
         )
+    
+    # Join all WAV files in order
+    join_wav_files(output_wav_files, os.path.join(output_folder_path, "final_output.wav"))
+
+# Function to join multiple WAV files
+def join_wav_files(wav_files, output_path):
+    with wave.open(output_path, 'wb') as outfile:
+        for wav_file in wav_files:
+            with wave.open(wav_file, 'rb') as infile:
+                if wav_file == wav_files[0]:
+                    outfile.setparams(infile.getparams())
+                outfile.writeframes(infile.readframes(infile.getnframes()))
 
 # Function to prompt the user for inputs
 def get_user_input(prompt):
