@@ -6,6 +6,15 @@ def split_and_clean_text_file(input_file, chunk_size=15000):
     with open(input_file, 'r') as file:
         text = file.read()
 
+    # Add a period after any text that looks like "Chapter [number]"
+    text = re.sub(r'(Chapter \d+)(\s)', r'\1. ', text)
+    # Replace two or more dashes with a comma to prevent long pauses
+    text = re.sub(r'--+', ',', text)
+
+    output_dir = 'chunks'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
     output_dir = 'chunks'
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
