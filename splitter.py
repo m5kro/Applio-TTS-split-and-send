@@ -19,6 +19,10 @@ def split_and_clean_text_file(input_file, chunk_size=15000):
         if end < len(text):
             end = text.rfind('.', start, end) + 1
 
+        # Replace newlines with spaces and remove extra spaces
+        chunk_text = text[start:end].replace('\n', ' ')
+        chunk_text = re.sub(r' {2,}', ' ', chunk_text)
+
         with open(os.path.join(output_dir, f'chunk_{chunk_number}.txt'), 'w') as file:
             file.write(chunk_text)
 
